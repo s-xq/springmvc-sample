@@ -18,8 +18,12 @@
         SELECT id , role_name AS roleName , note FROM t_role WHERE id = #{id}
     </select>
 
-    <select id ="findRoles" parameterType = "string" resultType="role">
-        SELECT id , role_name AS roleName , note FROM t_role
-        WHERE role_name LIKE concat('%', #{roleName}, '%')
+    <select id="findRoles" parameterType="string" resultType="com.sxq.springmvc.pojo.Role">
+        select id, role_name as roleName, note from t_role
+        <where>
+            <if test = "roleName != null">
+                role_name like concat('%', #{roleName}, '%')
+            </if>
+        </where>
     </select>
 </mapper>

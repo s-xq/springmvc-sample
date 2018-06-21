@@ -13,3 +13,15 @@ CREATE TABLE IF NOT EXISTS t_role
 INSERT INTO t_role(role_name, note) VALUE  ('admin', 'Administration');
 INSERT INTO t_role(role_name, note) VALUE  ('user', 'User');
 
+
+INSERT INTO t_role(role_name, note) VALUE  ('admin', 'Administration');
+INSERT INTO t_role(role_name, note) VALUE  ('admin', 'Administration');
+INSERT INTO t_role(role_name, note) VALUE  ('admin', 'Administration');
+INSERT INTO t_role(role_name, note) VALUE  ('admin', 'Administration');
+INSERT INTO t_role(role_name, note) VALUE  ('admin', 'Administration');
+INSERT INTO t_role(role_name, note) VALUE  ('admin', 'Administration');
+INSERT INTO t_role(role_name, note) VALUE  ('admin', 'Administration');
+INSERT INTO t_role(role_name, note) VALUE  ('admin', 'Administration');
+INSERT INTO t_role(role_name, note) VALUE  ('admin', 'Administration');
+
+
