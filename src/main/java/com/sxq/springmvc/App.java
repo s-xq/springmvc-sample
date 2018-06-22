@@ -1,38 +1,31 @@
 package com.sxq.springmvc;
 
-import com.sxq.springmvc.mapper.RoleMapper;
-import com.sxq.springmvc.plugin.PageParams;
+import com.sxq.springmvc.config.RedisConfig;
+import com.sxq.springmvc.config.RootConfig;
 import com.sxq.springmvc.pojo.Role;
-import com.sxq.springmvc.utils.SqlSessionFactoryUtils;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.log4j.Logger;
+import com.sxq.springmvc.service.RoleService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.util.List;
 
 public class App {
 
     public static void main(String[] args) {
-        testPagePlugin();
-    }
-
-
-    private static void testPagePlugin() {
-        Logger log = Logger.getLogger(App.class);
-        SqlSession sqlSession = null;
-        try {
-            sqlSession = SqlSessionFactoryUtils.openSqlSession();
-            RoleMapper roleMapper = sqlSession.getMapper(RoleMapper.class);
-            PageParams pageParams = new PageParams();
-            pageParams.setPageSize(5);
-            List<Role> roleList = roleMapper.findRoles(pageParams, "admin");
-            log.info(roleList.size());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            sqlSession.rollback();
-        } finally {
-            if (sqlSession != null) {
-                sqlSession.close();
-            }
-        }
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(RootConfig.class, RedisConfig.class);
+        RoleService roleService = ctx.getBean(RoleService.class);
+        Role role = new Role();
+        role.setRoleName("name_1");
+        role.setNote("role_note_1");
+        roleService.insertRole(role);
+        Role getRole = roleService.getRole(role.getId());//从缓存中获取
+        getRole.setNote("role_note_1_update");
+        roleService.updateRole(getRole);
+        /**
+         * 查看Redis所有键值，使用:
+         *
+         *<code>redis-cli key * </code>
+         *
+         */
+//        roleService.deleteRole(getRole.getId());
     }
 }

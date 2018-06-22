@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.sxq.springmvc.mapper.RoleMapper">
-    <insert id="insertRole" parameterType="role">
+<mapper namespace="com.sxq.springmvc.dao.RoleDao">
+    <insert id="insertRole" parameterType="role"
+            useGeneratedKeys="true" keyProperty="id">#注意使用此行，以回填role中的主键
         INSERT INTO t_role(role_name, note) VALUE  (#{roleName}, #{note})
     </insert>
 
@@ -23,6 +24,10 @@
         <where>
             <if test = "roleName != null">
                 role_name like concat('%', #{roleName}, '%')
+            </if>
+
+            <if test = "note != null">
+                note like concat('%', #{note}, '%')
             </if>
         </where>
     </select>

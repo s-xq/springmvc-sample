@@ -1,12 +1,13 @@
-package com.sxq.springmvc.mapper;
+package com.sxq.springmvc.dao;
 
-import com.sxq.springmvc.plugin.PageParams;
 import com.sxq.springmvc.pojo.Role;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface RoleMapper {
+@Repository
+public interface RoleDao {
 
     int insertRole(Role role);
 
@@ -16,5 +17,5 @@ public interface RoleMapper {
 
     Role getRole(Long id);
 
-    List<Role> findRoles(@Param("pageParams") PageParams pageParams, @Param("roleName") String roleName);
+    List<Role> findRoles(@Param("roleName") String roleName, @Param("note") String note);
 }
