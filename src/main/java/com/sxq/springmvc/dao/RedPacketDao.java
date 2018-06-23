@@ -1,6 +1,7 @@
 package com.sxq.springmvc.dao;
 
 import com.sxq.springmvc.pojo.RedPacket;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -27,4 +28,11 @@ public interface RedPacketDao {
      */
     int decreaseRedPacket(Long id);
 
+    /**
+     * 扣减抢红包数，使用乐观锁
+     * @param id
+     * @param version
+     * @return
+     */
+    int decreaseRedPacketForVersion(@Param("id") Long id, @Param("version") Integer version);
 }
