@@ -4,7 +4,7 @@
 <mapper namespace="com.sxq.springmvc.dao.UserRedPacketDao">
     <insert id= "grapRedPacket" parameterType="com.sxq.springmvc.pojo.UserRedPacket"
             useGeneratedKeys="true" keyProperty="id">
-          INSERT INTO T_USER_RED_PACKET (red_packet_id, user_id, amount, grap_time, note)
-                  VALUES(#{redPacketId}, #{userId}, #{amount}, now(), #{note})
+          INSERT INTO T_USER_RED_PACKET (red_packet_id, user_id, amount, grab_time, note)
+                  VALUES(#{redPacketId}, #{userId}, #{amount}, #{grabTime}, #{note})
     </insert>
 </mapper>

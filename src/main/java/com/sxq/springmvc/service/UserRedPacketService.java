@@ -8,7 +8,7 @@ public interface UserRedPacketService {
      * @param userId
      * @return
      */
-    int grapRedPacket(Long redPacketId, Long userId);
+    int grabRedPacket(Long redPacketId, Long userId);
 
     /**
      * 通过Redis实现抢红包
@@ -19,5 +19,5 @@ public interface UserRedPacketService {
      * 1 成功，且不是最后一个红包
      * 2 成功，且是最后一个红包
      */
-    Long grapRedisPacketByRedis(Long redPacketId, Long userId);
+    Long grabRedisPacketByRedis(Long redPacketId, Long userId);
 }

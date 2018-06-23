@@ -52,9 +52,9 @@ public class RedisConfig{
         redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.setDefaultSerializer(stringRedisSerializer);
         redisTemplate.setKeySerializer(stringRedisSerializer);
-        redisTemplate.setValueSerializer(jdkSerializationRedisSerializer);
+        redisTemplate.setValueSerializer(stringRedisSerializer);//由于序列化器配置错误导致的异常
         redisTemplate.setHashKeySerializer(stringRedisSerializer);
-        redisTemplate.setHashValueSerializer(jdkSerializationRedisSerializer);
+        redisTemplate.setHashValueSerializer(stringRedisSerializer);
         return redisTemplate;
     }
 

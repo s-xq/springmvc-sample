@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class RedisRedPacketServiceImpl implements RedisRedPacketService{
+public class RedisRedPacketServiceImpl implements RedisRedPacketService {
 
     private static final String PREFIX = "red_packet_list_";
 
@@ -36,47 +36,54 @@ public class RedisRedPacketServiceImpl implements RedisRedPacketService{
     @Async
     @Override
     public void saveUserRedPacketByRedis(Long redPacketId, Double unitAmount) {
-        System.out.println("开始保存数据");
-        Long start = System.currentTimeMillis();
-        //获取列表操作对象
-        BoundListOperations ops = redisTemplate.boundListOps(PREFIX + redPacketId);
-        Long size = ops.size();
-        Long times = size % TIME_SIZE == 0 ? size / TIME_SIZE : size / TIME_SIZE + 1;
-        int count = 0;
-        List<UserRedPacket> userRedPacketList = new ArrayList<UserRedPacket>(TIME_SIZE);
-        for (int i = 0; i < times; i++) {
-            //获取至多TIME_SIZE个抢红包信息
-            List userIdList = null;
-            if (i == 0) {
-                userIdList = ops.range(i * TIME_SIZE, (i + 1) * TIME_SIZE);
-            } else {
-                userIdList = ops.range(i * TIME_SIZE + 1, (i + 1) * TIME_SIZE);
+        try {
+            System.out.println("开始保存数据");
+            Long start = System.currentTimeMillis();
+            //获取列表操作对象
+            BoundListOperations ops = redisTemplate.boundListOps(PREFIX + redPacketId);
+            Long size = ops.size();
+            Long times = size % TIME_SIZE == 0 ? size / TIME_SIZE : size / TIME_SIZE + 1;
+            int count = 0;
+            List<UserRedPacket> userRedPacketList = new ArrayList<UserRedPacket>(TIME_SIZE);
+            for (int i = 0; i < times; i++) {
+                //获取至多TIME_SIZE个抢红包信息
+                List userIdList = null;
+                if (i == 0) {
+                    //由于序列化器配置错误导致的异常
+                    userIdList = ops.range(i * TIME_SIZE, (i + 1) * TIME_SIZE);
+                } else {
+                    userIdList = ops.range(i * TIME_SIZE + 1, (i + 1) * TIME_SIZE);
+                }
+                userRedPacketList.clear();
+                //保存红包信息
+                for (int j = 0; j < userIdList.size(); j++) {
+                    String args = userIdList.get(j).toString();
+                    String[] arr = args.split("-");
+                    String userIdStr = arr[0];
+                    String timeStr = arr[1];
+                    Long userId = Long.parseLong(userIdStr);
+                    Long time = Long.parseLong(timeStr);
+                    //生成红包信息
+                    UserRedPacket userRedPacket = new UserRedPacket();
+                    userRedPacket.setRedPacketId(redPacketId);
+                    userRedPacket.setUserId(userId);
+                    userRedPacket.setAmount(unitAmount);
+                    userRedPacket.setGrabTime(new Timestamp(time));
+                    userRedPacket.setNote("抢红包 " + redPacketId);
+                    userRedPacketList.add(userRedPacket);
+                }
+                //插入抢红包信息
+                count += executeBatch(userRedPacketList);
             }
-            userRedPacketList.clear();
-            //保存红包信息
-            for (int j = 0; j < userIdList.size(); j++) {
-                String args = userIdList.get(j).toString();
-                String[] arr = args.split("-");
-                String userIdStr = arr[0];
-                String timeStr = arr[1];
-                Long userId = Long.parseLong(userIdStr);
-                Long time = Long.parseLong(timeStr);
-                //生成红包信息
-                UserRedPacket userRedPacket = new UserRedPacket();
-                userRedPacket.setRedPacketId(redPacketId);
-                userRedPacket.setUserId(userId);
-                userRedPacket.setAmount(unitAmount);
-                userRedPacket.setGrabTime(new Timestamp(time));
-                userRedPacket.setNote("抢红包 " + redPacketId);
-                userRedPacketList.add(userRedPacket);
-            }
-            //插入抢红包信息
-            count += executeBatch(userRedPacketList);
+            //删除Redis列表
+            redisTemplate.delete(PREFIX + redPacketId);
+            Long end = System.currentTimeMillis();
+            System.out.println("保存数据结束，耗时" + (end - start) + "毫秒，总共" + count + "条数据被保存");
+        } catch (Exception ex) {
+            //由于序列化器配置错误导致的异常
+            ex.printStackTrace();
         }
-        //删除Redis列表
-        redisTemplate.delete(PREFIX + redPacketId);
-        Long end = System.currentTimeMillis();
-        System.out.println("保存数据结束，耗时"+ (end - start) + "毫秒，总共"+ count + "条数据被保存");
+
     }
 
     /**
@@ -108,6 +115,13 @@ public class RedisRedPacketServiceImpl implements RedisRedPacketService{
             //提交事务
             conn.commit();
         } catch (SQLException e) {
+            /**
+             * 修复{@link UserRedPacket#grabTime}命名错误导致的异常
+             *
+             * 修复java.sql.BatchUpdateException: Unknown column 'grap_time' in 'field list'
+             *
+             */
+            e.printStackTrace();
             throw new RuntimeException("抢红包批量执行程序错误");
         } finally {
             try {

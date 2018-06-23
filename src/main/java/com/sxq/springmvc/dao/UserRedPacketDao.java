@@ -11,5 +11,5 @@ public interface UserRedPacketDao {
      * @param userRedPacket 抢红包信息
      * @return 影响条数
      */
-    int grapRedPacket(UserRedPacket userRedPacket);
+    int grabRedPacket(UserRedPacket userRedPacket);
 }

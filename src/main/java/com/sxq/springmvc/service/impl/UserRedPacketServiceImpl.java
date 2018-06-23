@@ -6,7 +6,6 @@ import com.sxq.springmvc.pojo.RedPacket;
 import com.sxq.springmvc.pojo.UserRedPacket;
 import com.sxq.springmvc.service.RedisRedPacketService;
 import com.sxq.springmvc.service.UserRedPacketService;
-import org.apache.ibatis.reflection.SystemMetaObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ public class UserRedPacketServiceImpl implements UserRedPacketService{
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED,
     propagation = Propagation.REQUIRED)
-    public int grapRedPacket(Long redPacketId, Long userId) {
+    public int grabRedPacket(Long redPacketId, Long userId) {
         //抢红包失败重试
         for (int i =0 ;i < 3; i++) {
             RedPacket redPacket = redPacketDao.getRedPacket(redPacketId);
@@ -45,7 +44,7 @@ public class UserRedPacketServiceImpl implements UserRedPacketService{
                 userRedPacket.setUserId(userId);
                 userRedPacket.setAmount(redPacket.getAmount());
                 userRedPacket.setNote("抢红包 " + redPacketId);
-                int result = userRedPacketDao.grapRedPacket(userRedPacket);
+                int result = userRedPacketDao.grabRedPacket(userRedPacket);
                 return result;
             } else {
                 //一旦没有库存，则马上退出抢红包
@@ -63,7 +62,7 @@ public class UserRedPacketServiceImpl implements UserRedPacketService{
     private RedisRedPacketService redisRedPacketService = null;
 
     //Lua脚本
-    String script = "local listKey = 'red_packet_list_'..KEYS[1] \n"
+    private String script = "local listKey = 'red_packet_list_'..KEYS[1] \n"
             + "local redPacket = 'red_packet_'..KEYS[1] \n"
             + "local stock = tonumber(redis.call('hget', redPacket, 'stock')) \n"
             + "if stock <= 0 then return 0 end \n"
@@ -74,20 +73,17 @@ public class UserRedPacketServiceImpl implements UserRedPacketService{
             + "return 1 \n";
 
     //在缓存Lua脚本后，使用该变量保存Redis返回的32位的SHA1编码，使用它去执行缓存的Lua脚本
-    String sha1 = null;
+    private String sha1 = null;
 
     @Override
-    public Long grapRedisPacketByRedis(Long redPacketId, Long userId) {
+    public Long grabRedisPacketByRedis(Long redPacketId, Long userId) {
         //当前抢红包用户和日期信息
         String args = userId + "-" + System.currentTimeMillis();
         Long result = null;
         Jedis jedis = (Jedis) redisTemplate.getConnectionFactory().getConnection().getNativeConnection();
         try{
-            System.out.println("上传Lua脚本");
             if(sha1 == null){
-                System.out.println("SHA == NULL");
                 sha1 = jedis.scriptLoad(script);
-                System.out.println("SHA1:" + sha1);
             }
             Object res = jedis.evalsha(sha1, 1, redPacketId+"", args);
             result = (Long)res;
@@ -99,6 +95,9 @@ public class UserRedPacketServiceImpl implements UserRedPacketService{
                 System.out.println("thread_name=" + Thread.currentThread().getName());
                 redisRedPacketService.saveUserRedPacketByRedis(redPacketId, unitAmount);
             }
+        }catch (Exception ex){
+            System.err.println("发生异常");
+            ex.printStackTrace();
         }finally {
             if(jedis != null && jedis.isConnected()){
                 jedis.close();

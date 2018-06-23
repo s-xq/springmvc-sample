@@ -16,10 +16,10 @@ public class UserRedPacketController {
     @Autowired
     private UserRedPacketService userRedPacketService = null;
 
-    @RequestMapping(value = "/grapRedPacket")
+    @RequestMapping(value = "/grabRedPacket")
     @ResponseBody
-    public Map<String, Object> grapRedPacket(Long redPacketId, Long userId){
-        Long result = userRedPacketService.grapRedisPacketByRedis(redPacketId, userId);
+    public Map<String, Object> grabRedPacket(Long redPacketId, Long userId){
+        Long result = userRedPacketService.grabRedisPacketByRedis(redPacketId, userId);
         Map<String , Object> retMap = new HashMap<String, Object>();
         boolean flag = result > 0;
         retMap.put("success", flag);

@@ -24,7 +24,7 @@ CREATE TABLE T_USER_RED_PACKET
   red_packet_id INT(12)NOT NULL ,
   user_id INT(12) NOT NULL ,
   amount DECIMAL(16,2) NOT NULL ,
-  grap_time TIMESTAMP NOT NULL ,
+  grab_time TIMESTAMP NOT NULL ,
   note VARCHAR(256) NULL ,
   PRIMARY KEY CLUSTERED(id)
 );
