@@ -1,6 +1,7 @@
 package com.sxq.springmvc.pojo;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 public class UserRedPacket implements Serializable{
 
@@ -10,6 +11,7 @@ public class UserRedPacket implements Serializable{
     private Long redPacketId;
     private Long userId;
     private Double amount;
+    private Timestamp grabTime;
     private String note ;
 
     public static long getSerialVersionUID() {
@@ -46,6 +48,14 @@ public class UserRedPacket implements Serializable{
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public Timestamp getGrabTime() {
+        return grabTime;
+    }
+
+    public void setGrabTime(Timestamp grabTime) {
+        this.grabTime = grabTime;
     }
 
     public String getNote() {

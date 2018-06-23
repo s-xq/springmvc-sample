@@ -19,7 +19,7 @@ public class UserRedPacketController {
     @RequestMapping(value = "/grapRedPacket")
     @ResponseBody
     public Map<String, Object> grapRedPacket(Long redPacketId, Long userId){
-        int result = userRedPacketService.grapRedPacket(redPacketId, userId);
+        Long result = userRedPacketService.grapRedisPacketByRedis(redPacketId, userId);
         Map<String , Object> retMap = new HashMap<String, Object>();
         boolean flag = result > 0;
         retMap.put("success", flag);
