@@ -12,6 +12,13 @@ public interface RedPacketService {
     RedPacket getRedPacket(Long id);
 
     /**
+     * 获取红包，使用悲观锁
+     * @param id
+     * @return
+     */
+    RedPacket getRedPacketForUpdate(Long id);
+
+    /**
      * 扣减红包
      * @param id
      * @return

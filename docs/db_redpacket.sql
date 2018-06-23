@@ -31,3 +31,4 @@ CREATE TABLE T_USER_RED_PACKET
 
 INSERT INTO T_RED_PACKET(user_id, amount, send_date, total, unit_amount,stock, note)
     VALUES (1, 200000.00, NOW(), 2000, 100.00, 2000, '20万元金额，2千个小红包，每个100元');
+

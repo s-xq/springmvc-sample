@@ -24,6 +24,14 @@ public class RedPacketServiceImpl implements RedPacketService{
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED,
+            propagation = Propagation.REQUIRED)
+    public RedPacket getRedPacketForUpdate(Long id) {
+        return redPacketDao.getRedPacketForUpdate(id);
+    }
+
+
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED,
     propagation = Propagation.REQUIRED)
     public int decreaseRedPacket(Long id) {
         return redPacketDao.decreaseRedPacket(id);

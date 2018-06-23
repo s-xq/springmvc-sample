@@ -27,7 +27,7 @@ public class UserRedPacketServiceImpl implements UserRedPacketService{
     @Transactional(isolation = Isolation.READ_COMMITTED,
     propagation = Propagation.REQUIRED)
     public int grapRedPacket(Long redPacketId, Long userId) {
-        RedPacket redPacket  = redPacketDao.getRedPacket(redPacketId);
+        RedPacket redPacket  = redPacketDao.getRedPacketForUpdate(redPacketId);
         if(redPacket.getStock() > 0){
             redPacketDao.decreaseRedPacket(redPacketId);
             UserRedPacket userRedPacket = new UserRedPacket();

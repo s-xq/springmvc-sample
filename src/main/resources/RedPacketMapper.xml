@@ -9,6 +9,13 @@
       from T_RED_PACKET WHERE id = #{id}
     </select>
 
+    <select id = "getRedPacketForUpdate" parameterType = "long"
+            resultType="com.sxq.springmvc.pojo.RedPacket">
+        SELECT id , user_id as userId, amount, send_date as sendDate, total, unit_amount as unitAmount, stock, version, note
+        from T_RED_PACKET WHERE id = #{id} FOR UPDATE
+    </select>
+
+
     <update id = "decreaseRedPacket">
         UPDATE T_RED_PACKET SET stock = stock -1 WHERE id = #{id}
     </update>
