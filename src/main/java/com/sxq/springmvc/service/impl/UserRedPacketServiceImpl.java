@@ -63,7 +63,7 @@ public class UserRedPacketServiceImpl implements UserRedPacketService{
     private RedisRedPacketService redisRedPacketService = null;
 
     //Lua脚本
-    private String script = "local listKey = 'red_packet_list_'..KEYS[1] \n"
+    String script = "local listKey = 'red_packet_list_'..KEYS[1] \n"
             + "local redPacket = 'red_packet_'..KEYS[1] \n"
             + "local stock = tonumber(redis.call('hget', redPacket, 'stock')) \n"
             + "if stock <= 0 then return 0 end \n"
@@ -74,7 +74,7 @@ public class UserRedPacketServiceImpl implements UserRedPacketService{
             + "return 1 \n";
 
     //在缓存Lua脚本后，使用该变量保存Redis返回的32位的SHA1编码，使用它去执行缓存的Lua脚本
-    private String sha1 = null;
+    String sha1 = null;
 
     @Override
     public Long grapRedisPacketByRedis(Long redPacketId, Long userId) {
