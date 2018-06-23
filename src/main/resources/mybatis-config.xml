@@ -2,33 +2,8 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <typeAliases>
-        <typeAlias alias = "role" type="com.sxq.springmvc.pojo.Role"/>
-    </typeAliases>
-
-    <plugins>
-       <plugin interceptor="com.sxq.springmvc.plugin.PagePlugin">
-           <property name="default.page" value="1" />
-           <property name="default.pageSize" value="20" />
-           <property name="default.useFlag" value="true" />
-           <property name="default.checkFlag" value="false" />
-           <property name="default.cleanOrderBy" value="false" />
-       </plugin>
-    </plugins>
-
-    <environments default="development">
-        <environment id="development">
-            <transactionManager type="JDBC"/>
-            <dataSource type="POOLED">
-                <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/ssm?useSSL=true"/>
-                <property name="username" value="root"/>
-                <property name="password" value=""/>
-            </dataSource>
-        </environment>
-    </environments>
-
     <mappers>
-        <mapper resource="RoleMapper.xml"/>
+        <mapper resource="RedPacketMapper.xml"/>
+        <mapper resource="UserRedPacketMapper.xml"/>
     </mappers>
 </configuration>

@@ -1,14 +1,18 @@
 package com.sxq.springmvc.config;
 
-import com.sxq.springmvc.utils.SqlSessionFactoryUtils;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
@@ -19,7 +23,9 @@ import java.util.Properties;
 
 @Configuration
 //定义Spring扫描包
-@ComponentScan("com.*")
+@ComponentScan(value = "com.*", includeFilters = {
+        @ComponentScan.Filter(type = FilterType.ANNOTATION, value = {Service.class})
+})
 //使用事务驱动管理器
 @EnableTransactionManagement
 //实现接口TransactionManagementConfigurer，这样就可以配置注解驱动事务
@@ -40,9 +46,12 @@ public class RootConfig implements TransactionManagementConfigurer{
         }
         Properties props = new Properties();
         props.setProperty("driverClassName", "com.mysql.jdbc.Driver");
-        props.setProperty("url", "jdbc:mysql://localhost:3306/ssm?useSSL=true");
+        props.setProperty("url", "jdbc:mysql://localhost:3306/redpacket?useSSL=true");
         props.setProperty("username", "root");
         props.setProperty("password", "");
+        props.setProperty("maxActive", "200");
+        props.setProperty("maxIdle", "20");
+        props.setProperty("maxWait", "30000");
         try{
             dataSource = BasicDataSourceFactory.createDataSource(props);
         }catch (Exception ex){
@@ -56,8 +65,12 @@ public class RootConfig implements TransactionManagementConfigurer{
      * @return
      */
     @Bean(name = "sqlSessionFactory")
-    public SqlSessionFactory initSqlSessionFactory(){
-        return SqlSessionFactoryUtils.getSqlSessionFactory();
+    public SqlSessionFactoryBean initSqlSessionFactory(){
+        SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
+        sqlSessionFactory.setDataSource(initDataSource());
+        Resource resource = new ClassPathResource("mybatis-config.xml");
+        sqlSessionFactory.setConfigLocation(resource);
+        return sqlSessionFactory;
     }
 
     /**
